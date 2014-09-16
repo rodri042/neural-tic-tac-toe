@@ -1,1 +1,7 @@
-Acá iría el ta te ti
+<h1 class="game">
+	<div ng-repeat="row in rows">
+		<span ng-repeat="cell in row">
+			| <a ng-click="click($index, $parent.$index)" href="javascript: void(0)">-</a> |
+		</span>
+	</div>
+</h1>
