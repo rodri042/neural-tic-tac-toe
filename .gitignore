@@ -1,0 +1,12 @@
+# Bundler config.
+/.bundle
+
+# Logfiles and tempfiles.
+/log
+/tmp
+
+# IDE
+*.sublime-workspace
+
+# Bower assets
+/vendor/assets/components

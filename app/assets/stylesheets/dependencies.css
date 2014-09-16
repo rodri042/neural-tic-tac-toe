@@ -1,0 +1,7 @@
+/*
+ *= require_self
+ *= require_tree .
+
+ *= require bootstrap/dist/css/bootstrap
+ *= require bootstrap/dist/css/bootstrap-theme
+ */
