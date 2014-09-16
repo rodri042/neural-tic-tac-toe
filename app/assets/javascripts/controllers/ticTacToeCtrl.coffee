@@ -16,5 +16,8 @@ class TicTacToeCtrl extends BaseCtrl
 			[[-1], [-1], [-1]]
 		]
 
-	click: (x, y) =>
-		alert "#{x}, #{y}"
+	click: (cell) =>
+		@_set cell, 1 if @get(cell) is -1
+
+	get: (cell) => cell[0]
+	_set: (cell, value) => cell[0] = value
