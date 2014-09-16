@@ -1,6 +1,6 @@
 neural-tic-tac-toe
 ========
 
-``javascript
+```javascript
 //todo: escribir una descripción
-``
+```
