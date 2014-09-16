@@ -2,7 +2,7 @@
 	<div ng-repeat="row in rows">
 		<span ng-repeat="cell in row">
 			|
-			<a ng-click="click(cell)" href="javascript: void(0)"><span ng-switch on="get(cell)"><span ng-switch-when="-1">~</span><span ng-switch-when="0">o</span><span ng-switch-when="1">x</span></span></a>
+			<a ng-click="click(cell)" href="javascript: void(0)"><span ng-switch on="get(cell)"><span ng-switch-when="0">~</span><span ng-switch-when="-1">o</span><span ng-switch-when="1">x</span></span></a>
 			|
 		</span>
 	</div>
