@@ -4,4 +4,5 @@ class LandingCtrl extends BaseCtrl
 	@inject()
 
 	initialize: =>
-		
+		window.debu = @
+		@net = new brain.NeuralNetwork
