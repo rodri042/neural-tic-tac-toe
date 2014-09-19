@@ -89,8 +89,9 @@ class TicTacToeCtrl extends BaseCtrl
 
 	checkWin: =>
 		@s.winner = @winner()
-		if @s.winner isnt "?" or @fullGame()
-			@end()
+		win = @s.winner isnt "?" or @fullGame()
+		if win then @end()
+		win
 
 	getRandomMove: =>
 		playingOptions = @cells()
@@ -98,6 +99,26 @@ class TicTacToeCtrl extends BaseCtrl
 
 		random = Math.floor Math.random() * playingOptions.length
 		playingOptions[random]
+
+	getNeuralMove: =>
+		playingOptions = @net.run(@getInputNeurons(@values()))
+			.map (weight, i) => i: i, weight: weight
+		playingOptions = _.sortBy(playingOptions, "weight")
+
+		for i in [0 ... playingOptions.length]
+			cell = @cells()[playingOptions[i].i]
+			if @get(cell) is @_ then return cell
+
+	#[1 si está usada la celda, 1 si jugó el jugador humano]
+	getInputNeurons: (values) =>
+		_.flatten values.map (value) =>
+			[+(value isnt @_), +(value is @x)]
+			
+	#cuánto conviene jugar en esta posición
+	getOutputNeurons: (i, totalMoves) =>
+		output = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+		output[i] = 3 / totalMoves
+		output
 
 	storeMoveData: (player, cell) =>
 		@moves[player].push
@@ -116,20 +137,16 @@ class TicTacToeCtrl extends BaseCtrl
 					if value is @x then @o
 					else if value is @o then @x
 					else @_
+				moveData
 
 		@moves[winner].forEach (moveData) =>
-			input = _.flatten moveData.snapshot.map (value) =>
-				[+(value isnt @_), +(value is @x)]
-			#^ [1 si está usada la celda, 1 si jugó el jugador humano]
-
-			output = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-			output[moveData.i] = 3 / @moves[winner].length
-			#^ cuánto conviene jugar en esta posición dado este input
-
-			@knowledgeBase.push input: input, output: output
+			@knowledgeBase.push
+				input: @getInputNeurons moveData.snapshot
+				output: @getOutputNeurons moveData.i, @moves[winner].length
 
 		@learn()
 
+	#vuelvo a instanciar / entrenar la red neuronal con el conocimiento
 	learn: =>
 		@net = new brain.NeuralNetwork
 			hiddenLayers: [9]
