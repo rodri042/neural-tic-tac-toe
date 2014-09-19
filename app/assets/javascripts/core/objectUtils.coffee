@@ -5,6 +5,6 @@ window.Function::partial = ->
 		fullArgs = args.concat Array.prototype.slice.call(arguments)
 		fn.apply @, fullArgs
 
-
+window.Array::isEmpty = -> @length is 0
 
 window.Array::none = (fn) -> not @some fn
