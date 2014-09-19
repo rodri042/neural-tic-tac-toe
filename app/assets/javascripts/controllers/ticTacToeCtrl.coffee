@@ -10,6 +10,7 @@ class TicTacToeCtrl extends BaseCtrl
 		@x = "x"
 		@o = "o"
 		@data = []
+		@botStarts = false
 
 		@reset()
 
@@ -22,15 +23,18 @@ class TicTacToeCtrl extends BaseCtrl
 			[["-"], ["-"], ["-"]]
 		]
 
-		@update()
+		@update (@botStarts and @emptyGame())
 
-	update: =>
-		@doRandomMove()
+	end: =>
+		@s.playing = false
+		@botStarts = !@botStarts
 
+	update: (move = true) =>
+		if @fullGame() then @end()
+
+		if move then @doRandomMove()
 		@s.winner = @winner()
-		fullGame = @cells().map(@get).every (cell) => cell isnt @_
-		if @s.winner isnt "?" or fullGame
-			@s.playing = false
+		if @s.winner isnt "?" then @end()
 
 
 	click: (cell) =>
@@ -42,6 +46,12 @@ class TicTacToeCtrl extends BaseCtrl
 
 	get: (cell) => cell[0]
 	set: (cell, value) => cell[0] = value
+
+	emptyGame: =>
+		@cells().map(@get).every (cell) => cell is @_
+
+	fullGame: =>
+		@cells().map(@get).every (cell) => cell isnt @_
 
 	#---
 
