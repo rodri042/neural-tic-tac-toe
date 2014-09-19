@@ -8,6 +8,9 @@
 			|
 		</span>
 	</div>
-
-	<div>El ganador es {{ winner }}</div>
 </h1>
+
+<h3 class="game" ng-show="!playing">
+	El ganador es "{{ winner }}".
+	[<a ng-click="reset()" href="javascript: void(0)">Volver a jugar</a>]
+</h3>

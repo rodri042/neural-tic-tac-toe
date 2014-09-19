@@ -11,25 +11,37 @@ class TicTacToeCtrl extends BaseCtrl
 		@o = "o"
 		@data = []
 
+		@reset()
+
+	reset: =>
+		@s.playing = true
+
 		@s.rows = [
 			[["-"], ["-"], ["-"]]
 			[["-"], ["-"], ["-"]]
 			[["-"], ["-"], ["-"]]
 		]
 
-		@firstTime = true
-		@randomMove()
+		@update()
+
+	update: =>
+		@doRandomMove()
+
+		@s.winner = @winner()
+		fullGame = @cells().map(@get).every (cell) => cell isnt @_
+		if @s.winner isnt "?" or fullGame
+			@s.playing = false
+
 
 	click: (cell) =>
-		if @get(cell) isnt 0
+		if @get(cell) isnt @_ or not @s.playing
 			return
 
-		if @firstTime
-			@doRandomMove()
-		@s.winner = @winner()
+		@set cell, @x
+		@update()
 
 	get: (cell) => cell[0]
-	set: (cell) => cell[0] = value
+	set: (cell, value) => cell[0] = value
 
 	#---
 
@@ -38,11 +50,15 @@ class TicTacToeCtrl extends BaseCtrl
 	winner: =>
 		values = @cells().map @get
 
-		[
-			[0, 1, 2], [3, 4, 5], [6, 7, 8]
-			[0, 3, 6], [1, 4, 7], [2, 5, 8]
-			[0, 4 8], [2, 4, 6]
-		].forEach (win) =>
+		winnerMoves = [
+			[0, 1, 2], [3, 4, 5], [6, 7, 8] #horizontal
+			[0, 3, 6], [1, 4, 7], [2, 5, 8] #vertical
+			[0, 4, 8], [2, 4, 6]            #diagonal
+		]
+
+		for i in [0...winnerMoves.length]
+			win = winnerMoves[i]
+
 			verifyIndex = (player) =>
 				win.every (i) => values[i] is player
 
@@ -58,7 +74,7 @@ class TicTacToeCtrl extends BaseCtrl
 		playingOptions = @cells()
 			.filter (cell) => @get(cell) is @_
 
-		random = Math.floor Math.random() * options.length
+		random = Math.floor Math.random() * playingOptions.length
 		@set playingOptions[random], @o
 
 	knowledgeData: =>
