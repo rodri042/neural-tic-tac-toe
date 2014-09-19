@@ -10,7 +10,6 @@ class TicTacToeCtrl extends BaseCtrl
 		@x = "x"
 		@o = "o"
 
-		@data = { x: [], o: [] }
 		@knowledgeBase = []
 
 		@botStarts = false
@@ -19,6 +18,7 @@ class TicTacToeCtrl extends BaseCtrl
 	reset: =>
 		@s.playing = true
 
+		@moves = { x: [], o: [] }
 		@s.rows = [
 			[["-"], ["-"], ["-"]]
 			[["-"], ["-"], ["-"]]
@@ -31,6 +31,7 @@ class TicTacToeCtrl extends BaseCtrl
 	end: =>
 		@s.playing = false
 		@botStarts = !@botStarts
+		@storeWinData()
 
 	moveO: =>
 		selectedCell = @getRandomMove()
@@ -82,15 +83,14 @@ class TicTacToeCtrl extends BaseCtrl
 
 		"?"
 
+	inputNeuronsFrom: (values) =>
+		_.flatten values.map (value) =>
+			[+(value isnt @_), +(value is @x)]
+
 	checkWin: =>
 		@s.winner = @winner()
 		if @s.winner isnt "?" or @fullGame()
 			@end()
-
-	storeMoveData: (player, cell) =>
-		@data[player].push
-			i: @cells().indexOf cell
-			snapshot: @values()
 
 	getRandomMove: =>
 		playingOptions = @cells()
@@ -99,21 +99,20 @@ class TicTacToeCtrl extends BaseCtrl
 		random = Math.floor Math.random() * playingOptions.length
 		playingOptions[random]
 
-	knowledgeInputs: =>
-		inputs = @
-			.cells()
-			.map((cell) =>
-				value = @get cell
-				[+(value isnt @_), +(value is @x)]
-			)
+	storeMoveData: (player, cell) =>
+		@moves[player].push
+			i: @cells().indexOf cell
+			snapshot: @values()
 
-		_.flatten inputs
+	storeWinData: =>
+		#tengo en moves la data de los movimientos del ganador
+		#guardarlos como input para la red neuronal
 
 	learn: (oldRows) =>
 		@net = new brain.NeuralNetwork
 			hiddenLayers: [9]
 			learningRate: 0.3
 
-		@data.push
+		@moves.push
 			input: oldRows
 			output: @values()
