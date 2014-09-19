@@ -139,6 +139,7 @@ class TicTacToeCtrl extends BaseCtrl
 	getOutputNeurons: (i, totalMoves) =>
 		output = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 		output[i] = 3 / totalMoves
+		#(son mejores jugadas las que lograron ganar con menos movimientos)
 		output
 
 	#almacena la información del movimiento
