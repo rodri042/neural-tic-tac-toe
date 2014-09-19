@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby "2.1.1"
+ruby "2.1.2"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.3'
@@ -35,9 +35,6 @@ end
 
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
-
-# Use debugger
-gem 'debugger', group: [:development, :test]
 
 # Use tools for running in production
 gem 'rails_12factor'
