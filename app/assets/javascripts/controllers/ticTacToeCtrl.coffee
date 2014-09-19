@@ -108,6 +108,15 @@ class TicTacToeCtrl extends BaseCtrl
 		winner = @winner()
 		if winner is "?" then return
 
+		if winner is @x
+			###si gana el usuario, invierto los valores
+			para que el bot aprenda eso y crea que ganó###
+			@moves[winner] = @moves[winner].map (moveData) =>
+				moveData.snapshot = moveData.snapshot.map (value) =>
+					if value is @x then @o
+					else if value is @o then @x
+					else @_
+
 		@moves[winner].forEach (moveData) =>
 			input = _.flatten moveData.snapshot.map (value) =>
 				[+(value isnt @_), +(value is @x)]
