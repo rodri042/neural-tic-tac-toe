@@ -9,7 +9,7 @@ class TicTacToeCtrl extends BaseCtrl
 		@_ = "-"
 		@x = "x"
 		@o = "o"
-		@data = []
+		@data = { x: [], o: [] }
 		@botStarts = false
 
 		@reset()
@@ -30,36 +30,39 @@ class TicTacToeCtrl extends BaseCtrl
 		@botStarts = !@botStarts
 
 	update: (move = true) =>
-		if @fullGame() then @end()
+		if @fullGame() then return @end()
 
-		if move then @doRandomMove()
+		if move
+			selectedCell = @getRandomMove()
+			@storeMoveData @o, selectedCell
+			@set selectedCell, @o
+
 		@s.winner = @winner()
 		if @s.winner isnt "?" then @end()
-
 
 	click: (cell) =>
 		if @get(cell) isnt @_ or not @s.playing
 			return
 
+		@storeMoveData @x, cell
 		@set cell, @x
 		@update()
 
 	get: (cell) => cell[0]
-	set: (cell, value) => cell[0] = value
-
-	emptyGame: =>
-		@cells().map(@get).every (cell) => cell is @_
-
-	fullGame: =>
-		@cells().map(@get).every (cell) => cell isnt @_
+	set: (cell, value) => cell[0] = value ; cell
 
 	#---
 
 	cells: => _.flatten @s.rows, true
+	values: => @cells().map @get
+
+	emptyGame: =>
+		@values().every (cell) => cell is @_
+
+	fullGame: =>
+		@values().every (cell) => cell isnt @_
 
 	winner: =>
-		values = @cells().map @get
-
 		winnerMoves = [
 			[0, 1, 2], [3, 4, 5], [6, 7, 8] #horizontal
 			[0, 3, 6], [1, 4, 7], [2, 5, 8] #vertical
@@ -70,7 +73,7 @@ class TicTacToeCtrl extends BaseCtrl
 			win = winnerMoves[i]
 
 			verifyIndex = (player) =>
-				win.every (i) => values[i] is player
+				win.every (i) => @values()[i] is player
 
 			if verifyIndex @x
 				return @x
@@ -80,23 +83,27 @@ class TicTacToeCtrl extends BaseCtrl
 
 		"?"
 
-	doRandomMove: =>
+	storeMoveData: (player, cell) =>
+		@data[player].push
+			i: @cells().indexOf cell
+			snapshot: @values()
+
+	getRandomMove: =>
 		playingOptions = @cells()
 			.filter (cell) => @get(cell) is @_
 
 		random = Math.floor Math.random() * playingOptions.length
-		@set playingOptions[random], @o
+		playingOptions[random]
 
-	knowledgeData: =>
-		input:
-			@
-				.cells()
-				.map((cell) =>
-					value = @get cell
-					[+(value isnt @_), +(value is @x)]
-				).flatten()
-		output:
-			[1, 0, 0, 0.5, 1, 1, 1, 1]
+	knowledgeInputs: =>
+		inputs = @
+			.cells()
+			.map((cell) =>
+				value = @get cell
+				[+(value isnt @_), +(value is @x)]
+			)
+
+		_.flatten inputs
 
 	learn: (oldRows) =>
 		@net = new brain.NeuralNetwork
