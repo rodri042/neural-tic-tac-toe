@@ -9,9 +9,11 @@ class TicTacToeCtrl extends BaseCtrl
 		@_ = "-"
 		@x = "x"
 		@o = "o"
-		@data = { x: [], o: [] }
-		@botStarts = false
 
+		@data = { x: [], o: [] }
+		@knowledgeBase = []
+
+		@botStarts = false
 		@reset()
 
 	reset: =>
@@ -23,18 +25,18 @@ class TicTacToeCtrl extends BaseCtrl
 			[["-"], ["-"], ["-"]]
 		]
 
-		@moveO (@botStarts and @emptyGame())
+		if @botStarts and @emptyGame()
+			@moveO
 
 	end: =>
 		@s.playing = false
 		@botStarts = !@botStarts
 
-	moveO: (move = true) =>
-		if move
-			selectedCell = @getRandomMove()
-			@storeMoveData @o, selectedCell
-			@set selectedCell, @o
-			@checkWin()
+	moveO: =>
+		selectedCell = @getRandomMove()
+		@storeMoveData @o, selectedCell
+		@set selectedCell, @o
+		@checkWin()
 
 	click: (cell) =>
 		if @get(cell) isnt @_ or not @s.playing
