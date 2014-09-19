@@ -2,7 +2,7 @@
 	<div ng-repeat="row in rows">
 		<span ng-repeat="cell in row">
 			|
-			<a ng-click="click(cell)" href="javascript: void(0)">
+			<a ng-click="moveX(cell)" href="javascript: void(0)">
 				<span>{{ get(cell) }}</span>
 			</a>
 			|

@@ -38,7 +38,7 @@ class TicTacToeCtrl extends BaseCtrl
 		@set selectedCell, @o
 		@checkWin()
 
-	click: (cell) =>
+	moveX: (cell) =>
 		if @get(cell) isnt @_ or not @s.playing
 			return
 
@@ -46,11 +46,6 @@ class TicTacToeCtrl extends BaseCtrl
 		@set cell, @x
 		win = @checkWin()
 		if not win then @moveO()
-
-	checkWin: =>
-		@s.winner = @winner()
-		if @s.winner isnt "?" or @fullGame()
-			@end()
 
 	get: (cell) => cell[0]
 	set: (cell, value) => cell[0] = value ; cell
@@ -86,6 +81,11 @@ class TicTacToeCtrl extends BaseCtrl
 				return @o
 
 		"?"
+
+	checkWin: =>
+		@s.winner = @winner()
+		if @s.winner isnt "?" or @fullGame()
+			@end()
 
 	storeMoveData: (player, cell) =>
 		@data[player].push
